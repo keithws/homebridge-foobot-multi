@@ -1,6 +1,6 @@
 import { API, DynamicPlatformPlugin, Logger, PlatformAccessory, PlatformConfig, Service, Characteristic } from 'homebridge';
 
-import { PLATFORM_NAME, PLUGIN_NAME, PLUGIN_VERSION } from './settings';
+import { PLATFORM_NAME, PLUGIN_NAME } from './settings';
 import { FoobotPlatformAccessory } from './platformAccessory';
 import { Foobot } from './foobot';
 
@@ -15,7 +15,6 @@ export class FoobotHomebridgePlatform implements DynamicPlatformPlugin {
 
   // this is used to track restored cached accessories
   public readonly accessories: PlatformAccessory[] = [];
-  public readonly version: number = PLUGIN_VERSION;
 
   constructor(
     public readonly log: Logger,
@@ -49,7 +48,7 @@ export class FoobotHomebridgePlatform implements DynamicPlatformPlugin {
   /**
    * This is an example method showing how to register discovered accessories.
    * Accessories must only be registered once, previously created accessories
-   * must not be registered again to prevent "duplicate UUID" errors.
+   * must not be registered again to prevent 'duplicate UUID' errors.
    */
   async discoverDevices() {
 
@@ -57,7 +56,7 @@ export class FoobotHomebridgePlatform implements DynamicPlatformPlugin {
     try {
 
       // get devices from Foobot API
-      this.log.info("Fetching devices.");
+      this.log.info('Fetching devices.');
       const foobot = new Foobot(this.config.apiKey);
       devices = await foobot.getDevices(this.config.userName);
 
@@ -73,7 +72,7 @@ export class FoobotHomebridgePlatform implements DynamicPlatformPlugin {
 
     }
 
-    this.log.debug("Discovered devices: ", devices);
+    this.log.debug('Discovered devices: ', devices);
 
     // loop over the discovered devices and register each one if it has not already been registered
     for (const device of devices) {
@@ -101,7 +100,9 @@ export class FoobotHomebridgePlatform implements DynamicPlatformPlugin {
 
         // create the accessory handler for the restored accessory
         // this is imported from `platformAccessory.ts`
-        const foobotAccessory = new FoobotPlatformAccessory(this, existingAccessory);
+        // TODO do I need to save this is a variablee
+        // const foobotAccessory = new FoobotPlatformAccessory(this, existingAccessory);
+        new FoobotPlatformAccessory(this, existingAccessory);
 
       } else {
 

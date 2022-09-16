@@ -1,9 +1,6 @@
-import { Service, PlatformAccessory, CharacteristicValue } from "homebridge";
-
-import { FoobotHomebridgePlatform } from "./platform";
-import { Foobot } from "./foobot";
-
-const REQUESTS_PER_DEVICE_PER_DAY = 200;
+import { Service, PlatformAccessory } from 'homebridge';
+import { FoobotHomebridgePlatform } from './platform';
+import { Foobot } from './foobot';
 
 /**
  * Platform Accessory
@@ -25,10 +22,11 @@ export class FoobotPlatformAccessory {
     private readonly accessory: PlatformAccessory,
   ) {
 
-    const mac = accessory.context.device.mac.match(/[A-F0-9]{2}/gi).join(":");
+    // MAC is not currently used, leaving here for future
+    // const mac = accessory.context.device.mac.match(/[A-F0-9]{2}/gi).join(':');
 
     // initialize persistent data
-    if (typeof accessory.context.data === "undefined") {
+    if (typeof accessory.context.data === 'undefined') {
 
       accessory.context.data = {
         airquality: this.platform.Characteristic.AirQuality.UNKNOWN,
@@ -38,7 +36,7 @@ export class FoobotPlatformAccessory {
         currentRelativeHumidity: 0,
         carbonDioxideLevel: 0,
         carbonDioxidePeakLevel: 0,
-        time: 0
+        time: 0,
       };
 
     }
@@ -50,25 +48,28 @@ export class FoobotPlatformAccessory {
     // set accessory information
     this.accessoryInformation = this.accessory.getService(this.platform.Service.AccessoryInformation);
     this.accessoryInformation!
-      .setCharacteristic(this.platform.Characteristic.Manufacturer, "Airboxlab SA")
+      .setCharacteristic(this.platform.Characteristic.Manufacturer, 'Airboxlab SA')
       .setCharacteristic(this.platform.Characteristic.SerialNumber, accessory.context.device.uuid)
-      .setCharacteristic(this.platform.Characteristic.Model, "Foobot")
-      .setCharacteristic(this.platform.Characteristic.FirmwareRevision, this.platform.version)
-      .setCharacteristic(this.platform.Characteristic.AppMatchingIdentifier, "id909284570");
+      .setCharacteristic(this.platform.Characteristic.Model, 'Foobot')
+      .setCharacteristic(this.platform.Characteristic.AppMatchingIdentifier, 'id909284570');
 
     // get the AirQualitySensor service if it exists, otherwise create a new AirQualitySensor service
     // you can create multiple services for each accessory
-    this.airQualitySensor = this.accessory.getService(this.platform.Service.AirQualitySensor) || this.accessory.addService(this.platform.Service.AirQualitySensor);
-    this.temperatureSensor = this.accessory.getService(this.platform.Service.TemperatureSensor) || this.accessory.addService(this.platform.Service.TemperatureSensor);
-    this.humiditySensor = this.accessory.getService(this.platform.Service.HumiditySensor) || this.accessory.addService(this.platform.Service.HumiditySensor);
-    this.carbonDioxideSensor = this.accessory.getService(this.platform.Service.CarbonDioxideSensor) || this.accessory.addService(this.platform.Service.CarbonDioxideSensor);
+    this.airQualitySensor = this.accessory.getService(
+      this.platform.Service.AirQualitySensor) || this.accessory.addService(this.platform.Service.AirQualitySensor);
+    this.temperatureSensor = this.accessory.getService(
+      this.platform.Service.TemperatureSensor) || this.accessory.addService(this.platform.Service.TemperatureSensor);
+    this.humiditySensor = this.accessory.getService(
+      this.platform.Service.HumiditySensor) || this.accessory.addService(this.platform.Service.HumiditySensor);
+    this.carbonDioxideSensor = this.accessory.getService(
+      this.platform.Service.CarbonDioxideSensor) || this.accessory.addService(this.platform.Service.CarbonDioxideSensor);
 
     // set the service name, this is what is displayed as the default name on the Home app
     // in this example we are using the name we stored in the `accessory.context` in the `discoverDevices` method.
-    this.airQualitySensor.setCharacteristic(this.platform.Characteristic.Name, accessory.context.device.name + " Air Quality");
-    this.temperatureSensor.setCharacteristic(this.platform.Characteristic.Name, accessory.context.device.name + " Temperature");
-    this.humiditySensor.setCharacteristic(this.platform.Characteristic.Name, accessory.context.device.name + " Humidity");
-    this.carbonDioxideSensor.setCharacteristic(this.platform.Characteristic.Name, accessory.context.device.name + " Carbon Dioxide");
+    this.airQualitySensor.setCharacteristic(this.platform.Characteristic.Name, accessory.context.device.name + ' Air Quality');
+    this.temperatureSensor.setCharacteristic(this.platform.Characteristic.Name, accessory.context.device.name + ' Temperature');
+    this.humiditySensor.setCharacteristic(this.platform.Characteristic.Name, accessory.context.device.name + ' Humidity');
+    this.carbonDioxideSensor.setCharacteristic(this.platform.Characteristic.Name, accessory.context.device.name + ' Carbon Dioxide');
 
     // create handlers for required characteristics
     this.airQualitySensor.getCharacteristic(this.platform.Characteristic.AirQuality)
@@ -95,20 +96,21 @@ export class FoobotPlatformAccessory {
       this.accessory.removeService(this.carbonDioxideSensor);
     }
 
-    this.platform.log.debug("Finished initializing accessory:", accessory.context.device.name);
+    this.platform.log.debug('Finished initializing accessory:', accessory.context.device.name);
 
     /**
      * Updating characteristics values asynchronously.
      * Setup an interval to run based on Foobot API quotas
      * also, always update at startup
+     * MINUTES_PER_REQUEST = 24 * 60 / REQUESTS_PER_DEVICE_PER_DAY
+     * REQUESTS_PER_DEVICE_PER_DAY = 200
      */
-    const MINUTES_PER_REQUEST = 24 * 60 / REQUESTS_PER_DEVICE_PER_DAY;
     this.updatecharacteristics();
 
   }
 
   /**
-   * Handle requests to get the current value of the "Air Quality" characteristic
+   * Handle requests to get the current value of the 'Air Quality' characteristic
    */
   handleAirQualityGet() {
 
@@ -120,7 +122,7 @@ export class FoobotPlatformAccessory {
   }
 
   /**
-   * Handle requests to get the current value of the "PM2.5 Density" characteristic
+   * Handle requests to get the current value of the 'PM2.5 Density' characteristic
    */
   handlePM2_5DensityGet() {
 
@@ -132,7 +134,7 @@ export class FoobotPlatformAccessory {
   }
 
   /**
-   * Handle requests to get the current value of the "VOC Density" characteristic
+   * Handle requests to get the current value of the 'VOC Density' characteristic
    */
   handleVOCDensityGet() {
 
@@ -144,7 +146,7 @@ export class FoobotPlatformAccessory {
   }
 
   /**
-   * Handle requests to get the current value of the "Current Temperature" characteristic
+   * Handle requests to get the current value of the 'Current Temperature' characteristic
    */
   handleCurrentTemperatureGet() {
 
@@ -156,7 +158,7 @@ export class FoobotPlatformAccessory {
   }
 
   /**
-   * Handle requests to get the current value of the "Current Relative Humidity" characteristic
+   * Handle requests to get the current value of the 'Current Relative Humidity' characteristic
    */
   handleCurrentRelativeHumidityGet() {
 
@@ -168,7 +170,7 @@ export class FoobotPlatformAccessory {
   }
 
   /**
-   * Handle requests to get the current value of the "Carbon Dioxide Detected" characteristic
+   * Handle requests to get the current value of the 'Carbon Dioxide Detected' characteristic
    */
   handleCarbonDioxideDetectedGet() {
 
@@ -180,7 +182,7 @@ export class FoobotPlatformAccessory {
   }
 
   /**
-   * Handle requests to get the current value of the "Carbon Dioxide Level" characteristic
+   * Handle requests to get the current value of the 'Carbon Dioxide Level' characteristic
    */
   handleCarbonDioxideLevelGet() {
 
@@ -192,7 +194,7 @@ export class FoobotPlatformAccessory {
   }
 
   /**
-   * Handle requests to get the current value of the "Carbon Dioxide Peak Level" characteristic
+   * Handle requests to get the current value of the 'Carbon Dioxide Peak Level' characteristic
    */
   handleCarbonDioxidePeakLevelGet() {
 
@@ -206,16 +208,16 @@ export class FoobotPlatformAccessory {
   async updatecharacteristics() {
 
     // fetch new data from the Foobot API
-    this.platform.log.info("Updating datapoints for " + this.accessory.context.device.name);
+    this.platform.log.info('Updating datapoints for ' + this.accessory.context.device.name);
     let datapoints;
     try {
 
       const foobot = new Foobot(this.platform.config.apiKey);
       const uuid = this.accessory.context.device.uuid;
-      let sensorList = "pm,voc,tmp,hum,allpollu";
+      let sensorList = 'pm,voc,tmp,hum,allpollu';
       if (!this.platform.config.co2off) {
 
-        sensorList += ",co2";
+        sensorList += ',co2';
 
       }
       datapoints = await foobot.getLastDataPoints(uuid, 0, 0, sensorList);
@@ -239,7 +241,7 @@ export class FoobotPlatformAccessory {
     this.platform.log.debug(datapoints);
 
     // push the new values to HomeKit
-    const pmIndex = datapoints.sensors.indexOf("pm");
+    const pmIndex = datapoints.sensors.indexOf('pm');
     if (pmIndex >= 0) {
 
       // constrain value to characteristic limits
@@ -252,12 +254,12 @@ export class FoobotPlatformAccessory {
 
       this.airQualitySensor.updateCharacteristic(
         this.platform.Characteristic.PM2_5Density,
-        this.accessory.context.data.pm25density
+        this.accessory.context.data.pm25density,
       );
 
     }
 
-    const tmpIndex = datapoints.sensors.indexOf("tmp");
+    const tmpIndex = datapoints.sensors.indexOf('tmp');
     if (tmpIndex >= 0) {
 
       // constrain value to characteristic limits
@@ -270,12 +272,12 @@ export class FoobotPlatformAccessory {
 
       this.temperatureSensor.updateCharacteristic(
         this.platform.Characteristic.CurrentTemperature,
-        this.accessory.context.data.currentTemperature
+        this.accessory.context.data.currentTemperature,
       );
 
     }
 
-    const humIndex = datapoints.sensors.indexOf("hum");
+    const humIndex = datapoints.sensors.indexOf('hum');
     if (humIndex >= 0) {
 
       // constrain value to characteristic limits
@@ -288,12 +290,12 @@ export class FoobotPlatformAccessory {
 
       this.humiditySensor.updateCharacteristic(
         this.platform.Characteristic.CurrentRelativeHumidity,
-        this.accessory.context.data.currentRelativeHumidity
+        this.accessory.context.data.currentRelativeHumidity,
       );
 
     }
 
-    const co2Index = datapoints.sensors.indexOf("co2");
+    const co2Index = datapoints.sensors.indexOf('co2');
     if (co2Index >= 0) {
 
       // constrain value to characteristic limits
@@ -307,20 +309,20 @@ export class FoobotPlatformAccessory {
 
       this.carbonDioxideSensor.updateCharacteristic(
         this.platform.Characteristic.CarbonDioxideDetected,
-        this.detectCO2(this.accessory.context.data.carbonDioxideLevel)
+        this.detectCO2(this.accessory.context.data.carbonDioxideLevel),
       );
       this.carbonDioxideSensor.updateCharacteristic(
         this.platform.Characteristic.CarbonDioxideLevel,
-        this.accessory.context.data.carbonDioxideLevel
+        this.accessory.context.data.carbonDioxideLevel,
       );
       this.carbonDioxideSensor.updateCharacteristic(
         this.platform.Characteristic.CarbonDioxidePeakLevel,
-        this.accessory.context.data.carbonDioxidePeakLevel
+        this.accessory.context.data.carbonDioxidePeakLevel,
       );
 
     }
 
-    const vocIndex = datapoints.sensors.indexOf("voc");
+    const vocIndex = datapoints.sensors.indexOf('voc');
     if (vocIndex >= 0) {
 
       // update value in the dynamic platform persistent storage
@@ -328,12 +330,12 @@ export class FoobotPlatformAccessory {
 
       this.airQualitySensor.updateCharacteristic(
         this.platform.Characteristic.VOCDensity,
-        this.accessory.context.data.vocdensity
+        this.accessory.context.data.vocdensity,
       );
 
     }
 
-    const allpolluIndex = datapoints.sensors.indexOf("allpollu");
+    const allpolluIndex = datapoints.sensors.indexOf('allpollu');
     if (allpolluIndex >= 0) {
 
       // update value in the dynamic platform persistent storage
@@ -341,12 +343,12 @@ export class FoobotPlatformAccessory {
 
       this.airQualitySensor.updateCharacteristic(
         this.platform.Characteristic.AirQuality,
-        this.accessory.context.data.airquality
+        this.accessory.context.data.airquality,
       );
 
     }
 
-    const timeIndex = datapoints.sensors.indexOf("time");
+    const timeIndex = datapoints.sensors.indexOf('time');
     if (timeIndex >= 0) {
 
       const timeValue = datapoints.datapoints[0][timeIndex];
@@ -356,7 +358,7 @@ export class FoobotPlatformAccessory {
 
     }
 
-    this.platform.log.debug("Finished updating datapoints for " + this.accessory.context.device.name);
+    this.platform.log.debug('Finished updating datapoints for ' + this.accessory.context.device.name);
 
     // setup next call to the foobot API
     // alternate between 5 minute delays and 10 minute delays
@@ -403,7 +405,7 @@ export class FoobotPlatformAccessory {
 
   prettyPrintDuration(milliseconds: number) {
 
-    let result = "";
+    let result = '';
     let remainder = milliseconds;
 
     if (remainder > 365.2525 * 24 * 60 * 60 * 1000) {
@@ -449,7 +451,7 @@ export class FoobotPlatformAccessory {
 
     }
 
-    result += `${remainder}ms`
+    result += `${remainder}ms`;
 
     return result;
 
@@ -462,7 +464,7 @@ export class FoobotPlatformAccessory {
 
     const CarbonDioxideDetected = this.platform.Characteristic.CarbonDioxideDetected;
 
-    let limit = this.platform.config.co2limit;
+    const limit = this.platform.config.co2limit;
     if (value > limit) {
       return CarbonDioxideDetected.CO2_LEVELS_ABNORMAL;
     } else {
@@ -579,7 +581,7 @@ export class FoobotPlatformAccessory {
 
   public setActive(isActive?: boolean) {
 
-    if (typeof isActive !== "boolean") {
+    if (typeof isActive !== 'boolean') {
       isActive = isActive || true;
     }
 
@@ -588,23 +590,23 @@ export class FoobotPlatformAccessory {
     // set all services to active/inactive
     this.airQualitySensor.updateCharacteristic(
       this.platform.Characteristic.StatusActive,
-      isActive
+      isActive,
     );
 
     this.temperatureSensor.updateCharacteristic(
       this.platform.Characteristic.StatusActive,
-      isActive
+      isActive,
     );
 
     this.humiditySensor.updateCharacteristic(
       this.platform.Characteristic.StatusActive,
-      isActive
+      isActive,
     );
 
     if (!this.platform.config.co2off) {
       this.carbonDioxideSensor.updateCharacteristic(
         this.platform.Characteristic.StatusActive,
-        isActive
+        isActive,
       );
     }
 

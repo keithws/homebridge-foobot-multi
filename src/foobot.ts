@@ -1,11 +1,12 @@
-const https = require("https");
+//const https = require('https');
+import * as https from 'https';
 
 export class Foobot {
 
-  public readonly BASE_HREF: string = "https://api.foobot.io/v2";
+  public readonly BASE_HREF: string = 'https://api.foobot.io/v2';
 
   constructor(
-    public readonly apiKey: string
+    public readonly apiKey: string,
   ) {
     return;
   }
@@ -29,7 +30,7 @@ export class Foobot {
   async getLastDataPoints(uuid: string, period?: number, averageBy?: number, sensorList?: string) : Promise<any> {
 
     if (!uuid) {
-      throw new Error("UUID required")
+      throw new Error('UUID required');
     }
 
     uuid = encodeURIComponent(uuid);
@@ -52,32 +53,32 @@ export class Foobot {
 
     return new Promise((resolve, reject) => {
 
-      if (typeof options === "undefined") {
+      if (typeof options === 'undefined') {
 
         options = {};
 
       }
 
-      if (typeof options.headers === "undefined") {
+      if (typeof options.headers === 'undefined') {
 
         options.headers = {};
 
       }
 
-      options.headers["accept"] = "application/json;charset=UTF-8";
-      options.headers["x-api-key-token"] = this.apiKey
+      options.headers['accept'] = 'application/json;charset=UTF-8';
+      options.headers['x-api-key-token'] = this.apiKey;
 
       https.get(url, options, (res) => {
 
         const { statusCode } = res;
-        const contentType = res.headers["content-type"];
+        const contentType = res.headers['content-type'];
 
         let err;
-        if (statusCode < 200 || statusCode >= 300) {
+        if (statusCode && (statusCode < 200 || statusCode >= 300)) {
 
           err = new Error(`Request Failed ${statusCode} ${url}`);
 
-        } else if (!/^application\/json/.test(contentType)) {
+        } else if (!/^application\/json/.test(contentType as string)) {
 
           err = new Error(`Invalid content-type; Expected application/json; Received ${contentType}; ${url}`);
 
@@ -89,10 +90,12 @@ export class Foobot {
           return;
         }
 
-        res.setEncoding("utf8");
-        let rawData = "";
-        res.on("data", (chunk) => { rawData += chunk; });
-        res.on("end", () => {
+        res.setEncoding('utf8');
+        let rawData = '';
+        res.on('data', (chunk) => {
+          rawData += chunk;
+        });
+        res.on('end', () => {
           try {
             const parsedData = JSON.parse(rawData);
             resolve(parsedData);
@@ -101,7 +104,7 @@ export class Foobot {
           }
         });
 
-      }).on("error", (err) => {
+      }).on('error', (err) => {
         reject(err);
       });
 
