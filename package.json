@@ -1,5 +1,4 @@
 {
-  "private": true,
   "displayName": "Homebridge Foobot Multi",
   "name": "homebridge-foobot-multi",
   "version": "1.0.0",
@@ -27,6 +26,7 @@
     "homebridge-plugin",
     "foobot-api",
     "foobot",
+    "Airboxlab",
     "carbon dioxide",
     "CO2",
     "particulate matter",

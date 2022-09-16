@@ -2,15 +2,16 @@
 <p align="center">
 
 <img src="https://github.com/homebridge/branding/raw/master/logos/homebridge-wordmark-logo-vertical.png" width="150">
+<img src="https://is4-ssl.mzstatic.com/image/thumb/Purple113/v4/79/ce/6f/79ce6fee-b4a1-2170-ff96-b9e342fd4492/AppIcon-0-0-1x_U007emarketing-0-0-0-7-0-0-85-220.png/460x0w.png" width="150">
 
 </p>
 
 
 # Homebridge Foobot Multi Plugin
 
-This plugin for Homebridge supports multiple Foobot air quality monitors. It will automatically create HomeKit accessories for each device registered with to your user at api.foobot.io.
+This plugin for [Homebridge][1] supports multiple [Foobot][2] air quality monitors. It will automatically create HomeKit accessories for each device registered with to your user at [api.foobot.io][3].
 
-It supports the lastest Homebridge features and does not slow down Homebridge. It requires a recent version of Homebridge and node.js.
+This plugin does not require your password, only your API key. It supports the lastest Homebridge features and does not slow down Homebridge. It requires a recent version of Homebridge and node.js.
 
 ## Install 
 
@@ -26,45 +27,17 @@ npm install -g homebridge-foobot-multi
 
 Open the [`config.json`](./config.json) and change the following attributes:
 
-* `username` - your username/email address for api.foobot.io
-* `password` - your password for api.foobot.io
+* `userName` - your username/email address for api.foobot.io
 * `apiKey` - your API key from api.foobot.io
+* `co2limit` - CO2 level in PPM to trigger detection
+* `co2off` - do not create a CO2 sensor in HomeKit
 
 
-## Customise Plugin
 
-You can now start customising the plugin template to suit your requirements.
+# License
+Homebridge Foobot Multi Plugin is available under the [Apache License, Version 2.0][4].
 
-* [`src/platform.ts`](./src/platform.ts) - this is where your device setup and discovery should go.
-* [`src/platformAccessory.ts`](./src/platformAccessory.ts) - this is where your accessory control logic should go, you can rename or create multiple instances of this file for each accessory type you need to implement as part of your platform plugin. You can refer to the [developer documentation](https://developers.homebridge.io/) to see what characteristics you need to implement for each service type.
-* [`config.schema.json`](./config.schema.json) - update the config schema to match the config you expect from the user. See the [Plugin Config Schema Documentation](https://developers.homebridge.io/#/config-schema).
-
-## Publish Package
-
-When you are ready to publish your plugin to [npm](https://www.npmjs.com/), make sure you have removed the `private` attribute from the [`package.json`](./package.json) file then run:
-
-```
-npm publish
-```
-
-If you are publishing a scoped plugin, i.e. `@username/homebridge-xxx` you will need to add `--access=public` to command the first time you publish.
-
-#### Publishing Beta Versions
-
-You can publish *beta* versions of your plugin for other users to test before you release it to everyone.
-
-```bash
-# create a new pre-release version (eg. 2.1.0-beta.1)
-npm version prepatch --preid beta
-
-# publsh to @beta
-npm publish --tag=beta
-```
-
-Users can then install the  *beta* version by appending `@beta` to the install command, for example:
-
-```
-sudo npm install -g homebridge-example-plugin@beta
-```
-
-
+  [1]: https://homebridge.io
+  [2]: https://foobot.io/features/
+  [3]: http://api.foobot.io/apidoc/index.html
+  [4]: https://github.com/keithws/homebridge-foobot-multi/blob/master/LICENSE
