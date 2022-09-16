@@ -1,5 +1,5 @@
 {
-  "pluginAlias": "ExampleHomebridgePlugin",
+  "pluginAlias": "FoobotMultiHomebridgePlugin",
   "pluginType": "platform",
   "singular": true,
   "schema": {
@@ -9,7 +9,34 @@
         "title": "Name",
         "type": "string",
         "required": true,
-        "default": "Example Dynamic Platform"
+        "default": "Foobot Dynamic Platform"
+      },
+      "apiKey": {
+        "title": "API Key",
+        "type": "string",
+        "required": true,
+        "description": "Your API key form api.foobot.io",
+        "placeholder": "eg. : eyJhbGciOiJIUzI1NiJ9.eyJncm.abcdffhOU"
+      },
+      "userName": {
+        "title": "Username",
+        "type": "string",
+        "required": true,
+        "placeholder": "jsmith@company.com"
+      },
+      "co2limit": {
+        "title": "CO2 Detection Level",
+        "description": "CO2 level in parts per million to trigger detection.",
+        "type": "number",
+        "required": true,
+        "default": 1925
+      },
+      "co2off": {
+        "title": "Disable CO2",
+        "description": "Foobot infers CO2 levels from VOCs and is known to be inaccurate.",
+        "type": "bool",
+        "required": true,
+        "default": false
       }
     }
   }

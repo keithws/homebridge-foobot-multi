@@ -1,16 +1,16 @@
 {
   "private": true,
-  "displayName": "Plugin Name",
-  "name": "homebridge-plugin-name",
+  "displayName": "Homebridge Foobot Multi",
+  "name": "homebridge-foobot-multi",
   "version": "1.0.0",
-  "description": "A short description about what your plugin does.",
+  "description": "Homebridge plugin for Foobot air quality monitor",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "git://github.com/USERNAME/GITHUB_PROJECT_NAME.git"
+    "url": "git://github.com/keithws/homebridge-foobot-multi.git"
   },
   "bugs": {
-    "url": "https://github.com/USERNAME/GITHUB_PROJECT_NAME/issues"
+    "url": "https://github.com/keithws/homebridge-foobot-multi/issues"
   },
   "engines": {
     "node": ">=14.18.1",
@@ -24,7 +24,21 @@
     "prepublishOnly": "npm run lint && npm run build"
   },
   "keywords": [
-    "homebridge-plugin"
+    "homebridge-plugin",
+    "foobot-api",
+    "foobot",
+    "carbon dioxide",
+    "CO2",
+    "particulate matter",
+    "PM2.5",
+    "PM10",
+    "volatile organic compounds",
+    "VOCs",
+    "air quality",
+    "temperature",
+    "humidity",
+    "global pollution index",
+    "aqi"
   ],
   "dependencies": {},
   "devDependencies": {
